@@ -1,2 +1,2 @@
 # jwt_api
-api made with jwt authentication and hateoas links
+api made with hateoas links and jwt authentication
