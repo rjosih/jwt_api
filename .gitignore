@@ -1,6 +1,5 @@
 node_modules
 .env
-
-# databases
 *.db
 *.sqlite3
+package-lock.json
