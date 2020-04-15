@@ -1,12 +1,12 @@
-const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken")
 
-const jwtSecret = require("../config/key.js");
-const jwtVerify = require("./middleware/auth.js");
+const jwtSecret = require("../config/key.js")
+const jwtVerify = require("./middleware/auth.js")
 
 module.exports = (app, db) => {
   // GET ALL
   app.get("/api/all", (req, res) => {
-    console.log(req.url);
+    console.log(req.url)
     db.Item.findAll({}).then(function (result) {
       if (result.length === 0) {
         for (var i = 0; i < 15; i++) {
@@ -14,26 +14,26 @@ module.exports = (app, db) => {
             name: "standardturkey",
             category: "standardmeat",
             price: 400,
-          });
+          })
         }
         res.status(200).json({
           message: "If you want to populate data click send again",
           result,
-        });
+        })
       } else {
         res.status(200).json({
           message: "All items have been successfullt listed",
           result,
-        });
+        })
       }
-    });
-  });
+    })
+  })
 
   // GET ITEM BY ID
   app.get("/api/:id", jwtVerify, (req, res) => {
     jwt.verify(req.token, jwtSecret.jwtSecret, (err, result) => {
       if (err) {
-        res.status(403);
+        res.status(403)
       } else {
         db.Item.findOne({
           where: {
@@ -43,23 +43,23 @@ module.exports = (app, db) => {
           if (result === null) {
             res.status(404).json({
               message: "Item not found.",
-            });
+            })
           } else {
             res.status(200).json({
               message: "200 ok",
               result,
-            });
+            })
           }
-        });
+        })
       }
-    });
-  });
+    })
+  })
 
   // CREATE NEW
   app.post("/api/new", jwtVerify, (req, res) => {
-    jwt.verify(req.token, jwtSecret.jwtSecret, (err, result) => {
+    jwt.verify(req.token, jwtSecret.jwtSecret, (err) => {
       if (err) {
-        res.status(403);
+        res.status(403)
       } else {
         db.Item.create({
           name: req.body.name || "turkey",
@@ -69,17 +69,17 @@ module.exports = (app, db) => {
           res.status(201).json({
             message: "Item created successfully!",
             result,
-          });
-        });
+          })
+        })
       }
-    });
-  });
+    })
+  })
 
   // UPDATE BY ID
   app.put("/api/update/:id", jwtVerify, (req, res) => {
-    jwt.verify(req.token, jwtSecret.jwtSecret, (err, result) => {
+    jwt.verify(req.token, jwtSecret.jwtSecret, (err) => {
       if (err) {
-        res.status(403);
+        res.status(403)
       } else {
         db.Item.update(
           {
@@ -93,26 +93,32 @@ module.exports = (app, db) => {
             },
           }
         ).then((result) => {
-          if (result === 1) {
-            res.status(204).json({
-              result,
-              message: "Item updated successfully!",
-            });
-          } else if (result === 0) {
-            res.status(400).json({
+            console.log(result[0])
+          if (result[0] === 1) {
+            res.status(200).send()
+            // .json({
+                // message: "Item updated successfully!",
+                // result,
+            // })
+          } else if (result[0] === 0) {
+            res.status(404).json({
               message: "Item not found",
-            });
+            })
+          } else {
+              res.status(500).json({
+                  message: 'Something went wrong'
+              })
           }
-        });
+        })
       }
-    });
-  });
+    })
+  })
 
   // DELETE BY ID
   app.delete("/api/delete/:id", jwtVerify, (req, res) => {
-    jwt.verify(req.token, jwtSecret.jwtSecret, (err, result) => {
+    jwt.verify(req.token, jwtSecret.jwtSecret, (err) => {
       if (err) {
-        res.status(403);
+        res.status(403)
       } else {
         db.Item.destroy({
           where: {
@@ -126,10 +132,14 @@ module.exports = (app, db) => {
           } else if (result === 0) {
             res.status(404).json({
               message: "Item not found",
-            });
+            })
+          } else {
+              res.status(500).json({
+                  message: 'Something went wrong'
+              })
           }
-        });
+        })
       }
-    });
-  });
-};
+    })
+  })
+}
