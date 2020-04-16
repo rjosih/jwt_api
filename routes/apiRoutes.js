@@ -6,8 +6,33 @@ const jwtVerify = require("./middleware/auth.js")
 module.exports = (app, db) => {
   // GET ALL
   app.get("/api/all", (req, res) => {
-    console.log(req.url)
     db.Item.findAll({}).then(function (result) {
+        var links = [
+            { 
+                self: 
+                [
+                    {
+                        method: 'GET',
+                        href: req.url, 
+                        rel: 'items'
+                    }
+                ],
+                to: 
+                [
+                    {
+                        method: 'GET',
+                        href: '/api/1',
+                        rel: 'getItemById'
+                    },
+                    {
+                        method: 'POST',
+                        href: '/api/new',
+                        rel: 'create'
+                    }
+                ]
+            }
+        ]
+
       if (result.length === 0) {
         for (var i = 0; i < 15; i++) {
           db.Item.create({
@@ -18,12 +43,11 @@ module.exports = (app, db) => {
         }
         res.status(200).json({
           message: "If you want to populate data click send again",
-          result,
         })
       } else {
         res.status(200).json({
-          message: "All items have been successfullt listed",
           result,
+          links
         })
       }
     })
@@ -32,6 +56,41 @@ module.exports = (app, db) => {
   // GET ITEM BY ID
   app.get("/api/:id", jwtVerify, (req, res) => {
     jwt.verify(req.token, jwtSecret.jwtSecret, (err, result) => {
+        var links = [
+            { 
+                self: 
+                [                    
+                    {
+                        method: 'GET',
+                        href: req.url, 
+                        rel: 'getItemById'
+                    }
+                ],
+                to: 
+                [
+                    {
+                        method: 'POST',
+                        href: '/api/new',
+                        rel: 'create'
+                    },
+                    {
+                        method: 'GET',
+                        href: '/api/all',
+                        rel: 'items'
+                    },
+                    { 
+                        method: 'DELETE',
+                        href: '/api/delete/' + req.params.id,
+                        rel: 'deleteById'
+                    },
+                    { 
+                        method: 'PUT',
+                        href: '/api/update/' + req.params.id,
+                        rel: 'updateById'
+                    }
+                ] 
+            }
+        ]
       if (err) {
         res.status(403)
       } else {
@@ -46,8 +105,8 @@ module.exports = (app, db) => {
             })
           } else {
             res.status(200).json({
-              message: "200 ok",
               result,
+              links
             })
           }
         })
@@ -57,6 +116,26 @@ module.exports = (app, db) => {
 
   // CREATE NEW
   app.post("/api/new", jwtVerify, (req, res) => {
+    var links = [
+        { 
+            self: 
+            [
+                { 
+                    method: 'POST',
+                    href: req.url, 
+                    rel: 'create'
+                }
+            ],
+            to: 
+            [
+                { 
+                    method: 'GET',
+                    href: '/api/all',
+                    rel: 'items'
+                }
+            ]
+        }
+    ]
     jwt.verify(req.token, jwtSecret.jwtSecret, (err) => {
       if (err) {
         res.status(403)
@@ -69,6 +148,7 @@ module.exports = (app, db) => {
           res.status(201).json({
             message: "Item created successfully!",
             result,
+            links
           })
         })
       }
@@ -95,11 +175,10 @@ module.exports = (app, db) => {
         ).then((result) => {
             console.log(result[0])
           if (result[0] === 1) {
-            res.status(200).send()
-            // .json({
-                // message: "Item updated successfully!",
-                // result,
-            // })
+            res.status(200).json({
+                message: "Item updated successfully!",
+                result,
+            })
           } else if (result[0] === 0) {
             res.status(404).json({
               message: "Item not found",
