@@ -174,10 +174,18 @@ module.exports = (app, db) => {
       if (err) {
         res.status(403);
       } else {
-        if (isNaN(req.body.price)) {
+       if(req.body.name === undefined) {
+          res.status(400).json({
+            message: 'Invalid name',
+          })
+        } else if (req.body.category === undefined) {
+          res.status(400).json({
+            message: 'Invalid category',
+          })
+       } else if (isNaN(req.body.price) || req.body.price === undefined) {
           res.status(400).json({
             message: 'Invalid price',
-          });
+          })
         } else {
           db.Item.update(
             {
