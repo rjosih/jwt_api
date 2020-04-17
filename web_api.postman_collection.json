@@ -1,0 +1,450 @@
+{
+	"info": {
+		"_postman_id": "3296a1a8-3ab8-4b95-a6ab-a8be5694ecdc",
+		"name": "web_api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Webhook",
+			"item": [
+				{
+					"name": "Get webhook",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "511430dc-5206-4786-94a4-91fdfb28dd6c",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Checks for HATEOAS links', function () {",
+									"    var jsonData = pm.response.json();",
+									"    console.log(jsonData.links)",
+									"    pm.expect(jsonData.links[0].self[0].rel).to.eql('infoWebhook');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcxMzgyMDEsImV4cCI6MTU4NzIyNDYwMX0.kUcuwNCLb-YvdLQo3KBHzRo6eZdlzCEvlzuapZ5F03Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/webhook",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"webhook"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create webhook",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "19390377-3a8f-4510-8a83-402be95473e0",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Checks for HATEOAS links', function () {",
+									"    var jsonData = pm.response.json();",
+									"    console.log(jsonData.links)",
+									"    pm.expect(jsonData.links[0].self[0].rel).to.eql('addWebhook');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcxMzgyMDEsImV4cCI6MTU4NzIyNDYwMX0.kUcuwNCLb-YvdLQo3KBHzRo6eZdlzCEvlzuapZ5F03Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/webhook",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"webhook"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "62c1a05e-cee7-42df-bc96-96b5995cf6c9",
+						"exec": [
+							"pm.test('200 ok', function () {",
+							"    pm.response.to.have.status(200); ",
+							"});",
+							"",
+							"",
+							"pm.test(\"Token recieved\", function () {",
+							"    var data = pm.response.json();",
+							"    console.log(pm.response.text())",
+							"    pm.expect(pm.response.text()).to.include('token');",
+							"});",
+							"",
+							"pm.test('Check for HATEOAS links', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.links[0].self[0].rel).to.eql('auth');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"login"
+					]
+				},
+				"description": "The auth to get JWT token"
+			},
+			"response": []
+		},
+		{
+			"name": "Get all items ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a5bd3a77-1f22-45a4-99bc-71c01e1e1adf",
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Gets 15 items', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.result.length).to.eql(15);",
+							"});",
+							"",
+							"pm.test('Checks for HATEOAS links', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.links[0].self[0].rel).to.eql('items');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"all"
+					]
+				},
+				"description": "Get all items "
+			},
+			"response": []
+		},
+		{
+			"name": "Create new item",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c22e611d-c527-4dd2-b5ab-22b9e4cb6b54",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4ef5e35d-1e5a-49a8-bc56-d800a2731fa4",
+						"exec": [
+							"pm.test(\"201 created successfully\", function () {",
+							"    pm.response.to.have.status(201); ",
+							"});",
+							"",
+							"    ",
+							"pm.test('Checks for HATEOAS links', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.links[0].self[0].rel).to.eql('create');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcxMzgyMDEsImV4cCI6MTU4NzIyNDYwMX0.kUcuwNCLb-YvdLQo3KBHzRo6eZdlzCEvlzuapZ5F03Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/new",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"new"
+					]
+				},
+				"description": "Create new item"
+			},
+			"response": []
+		},
+		{
+			"name": "Get item by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d8a08939-7b12-4f5e-84b6-a79b32d38db6",
+						"exec": [
+							"pm.test('Status code is 200', function () { ",
+							"    pm.response.to.have.status(200); ",
+							"    ",
+							"});",
+							"",
+							"pm.test('Recieved only 1 item', function () {",
+							"    var jsonData = pm.response.json();",
+							"    var oneObj = (Object.keys(jsonData.result).length)/6;",
+							"    ",
+							"    pm.expect(oneObj).to.eql(1);",
+							"});",
+							"",
+							"pm.test('Checks for HATEOAS links', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.links[0].self[0].rel).to.eql('getItemById');",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcwNTEzNTcsImV4cCI6MTU4NzEzNzc1N30.US-1rS58k1lUaFgwW7g_n-jC-G-GMy2QmkMevR0qmsw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete item by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "31e18d52-413e-4dfe-8ba3-ac603691b39d",
+						"exec": [
+							"pm.test('Item deleted', function () {",
+							"    pm.response.to.have.status(200); ",
+							"});",
+							"",
+							"    ",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcwNTEzNTcsImV4cCI6MTU4NzEzNzc1N30.US-1rS58k1lUaFgwW7g_n-jC-G-GMy2QmkMevR0qmsw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/delete/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"delete",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update item by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f41e132c-1908-4d0e-98ad-de223294c7f8",
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200)",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcxNDAxNTksImV4cCI6MTU4NzIyNjU1OX0.0IFTOQTGFTnGB0yp63qnhNgJsOtmW7VBCSVqvU3xVec",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"carrots\",\n\t\"category\": \"veggies\",\n\t\"price\":65\n\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/update/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"update",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "06d2bb9a-e55f-431e-b124-98ce9a7c4fd8",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "99d9d036-7a45-484d-9164-35ba6cdd3c7c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
