@@ -1,5 +1,5 @@
-module.exports = (server) => {
+module.exports = (app) => {
 	// Second parameter is the base route.
-	require('./apiRoutes')(server, '/apiRoutes/')
-	require('./webhook')(server, '/webhook/')
+	require('./webhook')(app, '/webhook/')
+	require('./apiRoutes')(app, '/apiRoutes/')
 }
