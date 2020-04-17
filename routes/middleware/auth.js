@@ -1,5 +1,6 @@
 
 function auth (req, res, next) {
+    console.log(req.body)
     // Get auth header value 
     const bearerAuthHeader = req.headers['authorization']
     // check if bearer if undefined 

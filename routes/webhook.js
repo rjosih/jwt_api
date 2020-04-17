@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const validUrl = require('valid-url')
 
 const webhook = require('../webhook/webhooks.js')
 const jwtSecret = require('../config/key.js')
@@ -29,10 +30,15 @@ module.exports = (app, db) => {
       if (err) {
         res.status(403)
       } else {
-        db.Item.findAll({}).then((result) => {
+        db.Item.findAll({})
+        .then((result) => {
           res.status(200).json({
             result,
             links,
+          })
+        }).catch(() => {
+          res.status(500).json({
+            message: 'Something went wrong'
           })
         })
       }
