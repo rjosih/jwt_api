@@ -39,7 +39,7 @@ app.post('/login', (req, res) => {
   
       if (user) {
           // generate an access token
-          const accessToken = jwt.sign({ username: user.username, role: user.role }, tokenSecret, { expiresIn: '20m' });
+          const accessToken = jwt.sign({ username: user.username, role: user.role }, tokenSecret, { expiresIn: '10m' });
           const refreshToken = jwt.sign({ username: user.username, role: user.role }, refreshTokenSecret);
   
           refreshTokens.push(refreshToken)
