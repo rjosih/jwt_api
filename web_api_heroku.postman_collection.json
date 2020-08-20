@@ -1,0 +1,458 @@
+{
+	"info": {
+		"_postman_id": "3e032096-9bdc-4e45-abb1-f0f6482db7a2",
+		"name": "web_api_heroku",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Webhook",
+			"item": [
+				{
+					"name": "Get webhook",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "124cd111-c9e2-4356-9c6e-e75f671a4a91",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Checks for HATEOAS links', function () {",
+									"    var jsonData = pm.response.json();",
+									"    console.log(jsonData.links)",
+									"    pm.expect(jsonData.links[0].self[0].rel).to.eql('infoWebhook');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcxMzgyMDEsImV4cCI6MTU4NzIyNDYwMX0.kUcuwNCLb-YvdLQo3KBHzRo6eZdlzCEvlzuapZ5F03Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/webhook",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"webhook"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create webhook",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "264559d9-764f-4844-85fa-0d03fef5537e",
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test('Checks for HATEOAS links', function () {",
+									"    var jsonData = pm.response.json();",
+									"    console.log(jsonData.links)",
+									"    pm.expect(jsonData.links[0].self[0].rel).to.eql('addWebhook');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcxMzgyMDEsImV4cCI6MTU4NzIyNDYwMX0.kUcuwNCLb-YvdLQo3KBHzRo6eZdlzCEvlzuapZ5F03Q",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/webhook",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"webhook"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a4223bdd-4256-4b56-a4ab-22fe03a0d63d",
+						"exec": [
+							"pm.test('200 ok', function () {",
+							"    pm.response.to.have.status(200); ",
+							"});",
+							"",
+							"",
+							"pm.test(\"Token recieved\", function () {",
+							"    var data = pm.response.json();",
+							"    console.log(pm.response.text())",
+							"    pm.expect(pm.response.text()).to.include('token');",
+							"});",
+							"",
+							"pm.test('Check for HATEOAS links', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.links[0].self[0].rel).to.eql('auth');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"john\",\n    \"password\": \"password123admin\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:4000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"login"
+					]
+				},
+				"description": "The auth to get JWT token"
+			},
+			"response": []
+		},
+		{
+			"name": "Get all items ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "be4a8ed5-78a7-4b84-bc95-d9956481b134",
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test('Gets 15 items', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.result.length).to.eql(15);",
+							"});",
+							"",
+							"pm.test('Checks for HATEOAS links', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.links[0].self[0].rel).to.eql('items');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"all"
+					]
+				},
+				"description": "Get all items "
+			},
+			"response": []
+		},
+		{
+			"name": "Create new item",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a8b5d356-e721-4f25-85eb-1351190fefc9",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4c37c1b5-7f01-4bc2-9418-7b6310763714",
+						"exec": [
+							"pm.test(\"201 created successfully\", function () {",
+							"    pm.response.to.have.status(201); ",
+							"});",
+							"",
+							"    ",
+							"pm.test('Checks for HATEOAS links', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.links[0].self[0].rel).to.eql('create');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcxMzgyMDEsImV4cCI6MTU4NzIyNDYwMX0.kUcuwNCLb-YvdLQo3KBHzRo6eZdlzCEvlzuapZ5F03Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/new",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"new"
+					]
+				},
+				"description": "Create new item"
+			},
+			"response": []
+		},
+		{
+			"name": "Get item by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e4b6aad1-14a1-4d24-9c3b-60d83fc0151f",
+						"exec": [
+							"pm.test('Status code is 200', function () { ",
+							"    pm.response.to.have.status(200); ",
+							"    ",
+							"});",
+							"",
+							"pm.test('Recieved only 1 item', function () {",
+							"    var jsonData = pm.response.json();",
+							"    var oneObj = (Object.keys(jsonData.result).length)/6;",
+							"    ",
+							"    pm.expect(oneObj).to.eql(1);",
+							"});",
+							"",
+							"pm.test('Checks for HATEOAS links', function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.links[0].self[0].rel).to.eql('getItemById');",
+							"",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcwNTEzNTcsImV4cCI6MTU4NzEzNzc1N30.US-1rS58k1lUaFgwW7g_n-jC-G-GMy2QmkMevR0qmsw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete item by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "889e6adb-5b4e-4175-956f-b10396ea7203",
+						"exec": [
+							"pm.test('Item deleted', function () {",
+							"    pm.response.to.have.status(200); ",
+							"});",
+							"",
+							"    ",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcwNTEzNTcsImV4cCI6MTU4NzEzNzc1N30.US-1rS58k1lUaFgwW7g_n-jC-G-GMy2QmkMevR0qmsw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/delete/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"delete",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update item by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "435d810b-9744-4931-a1d0-f4e1480f5b47",
+						"exec": [
+							"pm.test('Status code is 200', function () {",
+							"    pm.response.to.have.status(200)",
+							"})",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1ODcxNDAxNTksImV4cCI6MTU4NzIyNjU1OX0.0IFTOQTGFTnGB0yp63qnhNgJsOtmW7VBCSVqvU3xVec",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"carrots\",\n\t\"category\": \"veggies\",\n\t\"price\":65\n\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/update/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"update",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "e7aa30b9-9da2-41b3-bd27-598f0c2aa5bf",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "d59225d2-94a6-4f56-b8c4-8c9df4b346d3",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
