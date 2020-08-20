@@ -46,7 +46,8 @@ module.exports = (app, db) => {
 
         db.Item.findAll({}).then((result) => {
           res.status(200).json({
-            result
+            result,
+            links
           })
         })
       } else if (result) {
