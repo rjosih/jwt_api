@@ -1,5 +1,5 @@
 const webhook = require('../webhook/webhooks.js')
-const jwtVerify = require('./middleware/auth.js')
+const jwtVerify = require('./middleware/jwtVerify.js')
 
 module.exports = (app, db) => {
   // GET ALL
@@ -43,8 +43,11 @@ module.exports = (app, db) => {
             price: 400,
           })
         }
-        res.status(200).json({
-          message: 'If you want to populate data click send again',
+
+        db.Item.findAll({}).then((result) => {
+          res.status(200).json({
+            result
+          })
         })
       } else if (result) {
         res.status(200).json({

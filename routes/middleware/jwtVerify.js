@@ -23,4 +23,4 @@ const jwtVerify = (req, res, next) => {
     }
 }
 
-module.exports = jwtVerify
+module.exports = ç

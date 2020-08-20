@@ -10,7 +10,7 @@ const jwtSecret = require('./config/key.js')
 const PORT = process.env.PORT || 3000
 
 const tokenSecret = jwtSecret.jwtSecret
-const refreshTokenSecret = 'somerandomstringforrefreshtoken';
+const refreshTokenSecret = 'somerandomstringforrefreshtoken'
 
 const users = [
     {
@@ -34,9 +34,7 @@ app.use(bodyParser.text())
 app.use(bodyParser.json({ type: "application/vnd.api+json" }))
 
 app.post('/login', (req, res) => {
-      // read username and password from request body
       const { username, password } = req.body;
-      // filter user from the users array by username and password
       const user = users.find(u => { return u.username === username && u.password === password });
   
       if (user) {
