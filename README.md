@@ -76,6 +76,7 @@ Put the members pool in the db and hash/salt/bcrypt/secure the password.
 * Copy the `accessToken`. 
 * Go to whatever endpoint you like --> Header, choose write `Authorization` as key and `Bearer + accessToken` in value field and hit send.
 ![PictureOfAcceptedToken](https://i.imgur.com/Hd80eFe.png)
+(Important to not have something set at the Authorization-tabo or environment variable since those two will overwrite our token in Header with a non-valid url.
 * Go to  --> GET `/api/all` and to populate data in the database.
 * Depending which user you are authenticated with you'll be forbidden or let through.
 
@@ -108,8 +109,3 @@ Tests are availble and provided in the Postman collection.
 * PUT `/api/:id` - Update item by id 
 * GET `/webhook` - Get webhook
 * POST `/webhook` - Create webhook
-
-## Features 
-As earlier mentioned: secure and create a real working user-system. Also generate a new token when the old expires, therefore it's a refreshed token that isn't in use for the moment. 
-
-

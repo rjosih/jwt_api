@@ -48,7 +48,7 @@ app.post('/login', (req, res) => {
           refreshTokens.push(refreshToken)
           res.json({
               accessToken,
-              refreshToken
+            //   refreshToken
           });
       } else {
           res.send('Username or password incorrect')
