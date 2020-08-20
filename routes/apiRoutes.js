@@ -1,5 +1,5 @@
 const webhook = require('../webhook/webhooks.js')
-const jwtVerify = require('./middleware/jwtVerify.js')
+const jwtVerify = require('../middleware/jwtVerify.js')
 
 module.exports = (app, db) => {
   // GET ALL

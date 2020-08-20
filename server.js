@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express")
 const app = express()
 const bodyParser = require("body-parser")
@@ -6,10 +7,12 @@ const jwt = require("jsonwebtoken")
 const db = require("./models")
 const apiRoutes = require("./routes/apiRoutes.js")
 const webhookRoutes = require('./routes/webhook.js')
-const jwtSecret = require('./config/key.js')
+// const jwtSecret = require('./config/key.js')
 const PORT = process.env.PORT || 3000
 
-const tokenSecret = jwtSecret.jwtSecret
+console.log(process.env.SECRET)
+
+const tokenSecret = process.env.SECRET
 const refreshTokenSecret = 'somerandomstringforrefreshtoken'
 
 const users = [
