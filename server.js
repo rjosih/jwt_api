@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken")
 const db = require("./models")
 const apiRoutes = require("./routes/apiRoutes.js")
 const webhookRoutes = require('./routes/webhook.js')
-const jwtSecret = require('./config/key.js')
+const jwtSecret = require('./models/config/key.js')
 const PORT = process.env.PORT || 3000
 
 const tokenSecret = jwtSecret.jwtSecret

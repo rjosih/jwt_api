@@ -1,7 +1,7 @@
 
 const jwt = require('jsonwebtoken')
 
-const jwtSecret = require('../../config/key')
+const jwtSecret = require('../../models/config/key')
 
 const tokenSecret = jwtSecret.jwtSecret
 
