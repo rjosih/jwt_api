@@ -1,7 +1,7 @@
 
 const jwt = require('jsonwebtoken')
 
-// const jwtSecret = require('../config/key')
+// const jwtSecret = require('../config/key.js')
 
 const tokenSecret = process.env.SECRET
 
