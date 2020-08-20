@@ -1,21 +1,26 @@
 
-function auth (req, res, next) {
-    console.log(req.body)
-    // Get auth header value 
-    const bearerAuthHeader = req.headers['authorization']
-    // check if bearer if undefined 
-    if (bearerAuthHeader === undefined) {
-        // Forbidden 
-        res.sendStatus(403)
+const jwt = require('jsonwebtoken')
+
+const jwtSecret = require('../../config/key')
+
+const tokenSecret = jwtSecret.jwtSecret
+
+const jwtVerify = (req, res, next) => {
+    const authHeader = req.headers.authorization
+    if (authHeader) {
+        const token = authHeader.split(' ')[1]
+
+        jwt.verify(token, tokenSecret, (err, user) => {
+            if (err) {
+                return res.sendStatus(403)
+            }
+
+            req.user = user
+            return next()
+        })
     } else {
-        const bearer = bearerAuthHeader.split(' ')
-        // Get token from array
-        const bearerToken = bearer[1]
-        // Set the token
-        req.token = bearerToken
-        // Next middlleware
-        next()
+        res.sendStatus(401)
     }
 }
 
-module.exports = auth
+module.exports = jwtVerify

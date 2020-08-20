@@ -37,7 +37,7 @@ My webhook is triggered when a new item has been created.
 
 * Firstly, you visit the POST `/webhook`
 * Then go to POST `/api/all` if you want to popylate the database or POST `/api/new`. 
-* When an item is created, GET `/webhook` to see all items that has been registered since the prenumeration.
+* When an item is created, GET `/webhook` to see all items that has been registered.
 
 To improve my api: I would like to have more validation and error handling when it comes to wrong inputs and unauthorized users. Also I would like to get rid of the redudancy in the code. 
 

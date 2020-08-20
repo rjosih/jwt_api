@@ -1,8 +1,4 @@
-const jwt = require('jsonwebtoken')
-const validUrl = require('valid-url')
-
 const webhook = require('../webhook/webhooks.js')
-const jwtSecret = require('../config/key.js')
 const jwtVerify = require('./middleware/auth.js')
 
 module.exports = (app, db) => {
@@ -25,62 +21,51 @@ module.exports = (app, db) => {
         ],
       },
     ]
-    
-    jwt.verify(req.token, jwtSecret.jwtSecret, (err) => {
-      if (err) {
-        res.status(403)
-      } else {
-        db.Item.findAll({})
-        .then((result) => {
-          res.status(200).json({
-            result,
-            links,
-          })
-        }).catch(() => {
-          res.status(500).json({
-            message: 'Something went wrong'
-          })
+
+    db.Item.findAll({})
+      .then((result) => {
+        res.status(200).json({
+          result,
+          links,
         })
-      }
-    })
+      }).catch(() => {
+        res.status(500).json({
+          message: 'Something went wrong'
+        })
+      })
   })
 
   app.post('/webhook', jwtVerify, (req, res) => {
     var links = [
-        {
-          self: [
-            {
-                method: 'POST',
-                href: req.url,
-                rel: 'addWebhook',
-            },
+      {
+        self: [
+          {
+            method: 'POST',
+            href: req.url,
+            rel: 'addWebhook',
+          },
         ],
         to: [
-            {
-                method: 'GET',
-                href: req.url,
-                rel: 'infoWebhook',
-            },
-          ],
-        },
-      ]
-    jwt.verify(req.token, jwtSecret.jwtSecret, (err) => {
-        if (err) {
-          res.status(403)
-        } else {
-            webhook.add('addWebhook', req.url)
-            .then(() => {
-                res.status(201).json({
-                    message: 'Webhook added successfully',
-                    links
-                })
-            }).catch((err) => {
-                res.status(400).json({
-                    message: 'Webhook failed',
-                    err
-                })
-            })
-        }
+          {
+            method: 'GET',
+            href: req.url,
+            rel: 'infoWebhook',
+          },
+        ],
+      },
+    ]
+
+    webhook.add('addWebhook', req.url)
+      .then(() => {
+        res.status(201).json({
+          message: 'Webhook added successfully',
+          links
+        })
+      }).catch((err) => {
+        res.status(400).json({
+          message: 'Webhook failed',
+          err
+        })
       })
   })
 }

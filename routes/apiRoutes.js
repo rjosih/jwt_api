@@ -1,13 +1,15 @@
-const jwt = require('jsonwebtoken')
-
-const jwtSecret = require('../config/key.js')
 const webhook = require('../webhook/webhooks.js')
-
 const jwtVerify = require('./middleware/auth.js')
 
 module.exports = (app, db) => {
   // GET ALL
-  app.get('/api/all', (req, res) => {
+  app.get('/api/all', jwtVerify, (req, res) => {
+    const { role } = req.user
+
+    if (role !== 'admin' && role !== 'member') {
+      return res.sendStatus(403)
+    }
+
     var links = [
       {
         self: [
@@ -30,7 +32,8 @@ module.exports = (app, db) => {
           },
         ],
       },
-    ];
+    ]
+
     db.Item.findAll({}).then((result) => {
       if (result.length === 0) {
         for (var i = 0; i < 15; i++) {
@@ -38,11 +41,11 @@ module.exports = (app, db) => {
             name: 'standardturkey',
             category: 'standardmeat',
             price: 400,
-          });
+          })
         }
         res.status(200).json({
           message: 'If you want to populate data click send again',
-        });
+        })
       } else if (result) {
         res.status(200).json({
           result,
@@ -51,13 +54,19 @@ module.exports = (app, db) => {
       } else {
         res.status(500).json({
           message: 'Something went wrong',
-        });
+        })
       }
-    });
-  });
+    })
+  })
 
   // GET ITEM BY ID
   app.get('/api/:id', jwtVerify, (req, res) => {
+    const { role } = req.user
+
+    if (role !== 'admin' && role !== 'member') {
+      return res.sendStatus(403)
+    }
+
     var links = [
       {
         self: [
@@ -90,33 +99,34 @@ module.exports = (app, db) => {
           },
         ],
       },
-    ];
-    jwt.verify(req.token, jwtSecret.jwtSecret, (err) => {
-      if (err) {
-        res.status(403);
-      } else {
-        db.Item.findOne({
-          where: {
-            id: req.params.id,
-          },
-        }).then((result) => {
-          if (result === null) {
-            res.status(404).json({
-              message: 'Item not found.',
-            });
-          } else {
-            res.status(200).json({
-              result,
-              links,
-            });
-          }
+    ]
+
+    db.Item.findOne({
+      where: {
+        id: req.params.id,
+      },
+    }).then((result) => {
+      if (result === null) {
+        res.status(404).json({
+          message: 'Item not found.',
         });
+      } else {
+        res.status(200).json({
+          result,
+          links,
+        })
       }
-    });
-  });
+    })
+  })
 
   // CREATE NEW
   app.post('/api/new', jwtVerify, (req, res) => {
+    const { role } = req.user
+
+    if (role !== 'admin') {
+      return res.sendStatus(403)
+    }
+
     var links = [
       {
         self: [
@@ -134,117 +144,117 @@ module.exports = (app, db) => {
           },
         ],
       },
-    ];
+    ]
 
-    jwt.verify(req.token, jwtSecret.jwtSecret, (err) => {
-      if (err) {
-        res.status(403);
-      } else {
-        if (isNaN(req.body.price)) {
-          res.status(400).json({
-            message: 'Invalid price',
+    
+    db.Item.create({
+      name: req.body.name || 'turkey',
+      category: req.body.category || 'meat',
+      price: req.body.price || 100,
+    })
+    .then((result) => {
+      webhook.trigger('New item', { data: result })
+          var item = {
+            name: req.body.name, 
+            category: req.body.category, 
+            price: req.body.price
+          }
+
+          res.status(201).json({
+            message: 'Item created successfully!',
+            item,
+            links,
           });
-        } else {
-          db.Item.create({
-            name: req.body.name || 'turkey',
-            category: req.body.category || 'meat',
-            price: req.body.price || 100,
+        })
+        .catch(() => {
+          res.status(500).json({
+            message: 'Item creation failed',
           })
-            .then((result) => {
-              webhook.trigger('New item', { data: result });
-              res.status(201).json({
-                message: 'Item created successfully!',
-                result,
-                links,
-              });
-            })
-            .catch(() => {
-              res.status(500).json({
-                message: 'Item creation failed',
-              });
-            });
-        }
-      }
-    });
-  });
+        })
+  })
 
   // UPDATE BY ID
   app.put('/api/update/:id', jwtVerify, (req, res) => {
-    jwt.verify(req.token, jwtSecret.jwtSecret, (err) => {
-      if (err) {
-        res.status(403);
-      } else {
-       if(req.body.name === undefined) {
-          res.status(400).json({
-            message: 'Invalid name',
-          })
-        } else if (req.body.category === undefined) {
-          res.status(400).json({
-            message: 'Invalid category',
-          })
-       } else if (isNaN(req.body.price) || req.body.price === undefined) {
-          res.status(400).json({
-            message: 'Invalid price',
-          })
-        } else {
-          db.Item.update(
-            {
-              name: req.body.name,
-              category: req.body.category,
-              price: req.body.price,
-            },
-            {
-              where: {
-                id: req.params.id,
-              },
-            }
-          ).then((result) => {
-            if (result[0] === 1) {
-              res.status(200).json({
-                message: 'Item updated successfully!',
-                result,
-              });
-            } else if (result[0] === 0) {
-              res.status(404).json({
-                message: 'Item not found',
-              });
-            } else {
-              res.status(500).json({
-                message: 'Something went wrong',
-              });
-            }
-          });
-        }
-      }
-    });
-  });
+    const { role } = req.user
+    var item = {
+      name: req.body.name, 
+      category: req.body.category, 
+      price: req.body.price
+    }
 
-  // DELETE BY ID
-  app.delete('/api/delete/:id', jwtVerify, (req, res) => {
-    jwt.verify(req.token, jwtSecret.jwtSecret, (err) => {
-      if (err) {
-        res.status(403);
-      } else {
-        db.Item.destroy({
+    if (role !== 'admin') {
+      return res.sendStatus(403)
+    }
+
+    if (req.body.name === undefined) {
+      res.status(400).json({
+        message: 'Invalid name',
+      })
+    } else if (req.body.category === undefined) {
+      res.status(400).json({
+        message: 'Invalid category',
+      })
+    } else if (isNaN(req.body.price) || req.body.price === undefined) {
+      res.status(400).json({
+        message: 'Invalid price',
+      })
+    } else {
+      db.Item.update(
+        {
+          name: req.body.name,
+          category: req.body.category,
+          price: req.body.price,
+        },
+        {
           where: {
             id: req.params.id,
           },
-        }).then((result) => {
-          if (result === 1) {
-            res.status(200).json({
-              message: 'Item deleted successfully!',
-            });
-          } else if (result === 0) {
-            res.status(404).json({
-              message: 'Item not found',
-            });
-          } else {
-            res.status(500).json({
-              message: 'Something went wrong',
-            });
-          }
+        }
+      ).then((result) => {
+        if (result[0] === 1) {
+          res.status(200).json({
+            message: 'Item updated successfully!',
+            item,
+          })
+        } else if (result[0] === 0) {
+          res.status(404).json({
+            message: 'Item not found',
+          })
+        } else {
+          res.status(500).json({
+            message: 'Something went wrong',
+          })
+        }
+      })
+    }
+  })
+
+  // DELETE BY ID
+  app.delete('/api/delete/:id', jwtVerify, (req, res) => {
+    const { role } = req.user
+
+    if (role !== 'admin') {
+      return res.sendStatus(403)
+    }
+
+    db.Item.destroy({
+      where: {
+        id: req.params.id,
+      },
+    }).then((result) => {
+      if (result === 1) {
+        res.status(200).json({
+          message: 'Item deleted successfully!',
         });
+      } else if (result === 0) {
+        res.status(404).json({
+          message: 'Item not found',
+        });
+      } else {
+        res.status(500).json({
+          message: 'Something went wrong',
+        })
       }
-    });
-  });
-};
+    })
+  })
+}
