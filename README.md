@@ -44,16 +44,72 @@ To improve my api: I would like to have more validation and error handling when 
 However I'm quite satisfied how the API works and I think it is quite easy to understand it, thanks a lot to the HATEOAS links. 
 
 ## Extra functionalities? 
-No
+Yes hardcoded two users: 
+* John - admin guy 
+* Anna - member 
+
+If you have John's credentials you'll have full access to all the endpoint while a regular member only can show all the items and getById.
+### Features for this functionality
+Put the members pool in the db and hash/salt/bcrypt/secure the password. 
+
 
 ## Getting Started
 * `npm i`
 * `node server`
 * Import the collection to Postman. 
-* Go to request `Login`
-* Copy the token. 
-* Go to Authorization, choose `Bearer Token` and paste the token in the token table.
-* Go to  --> GET `/api/all` and click twice to populate data in the database.
+* Go to request `Login` --> Body --> Raw > JSON and paste either the admin's or member's credentials:
+### Admin
+`{
+    "username": "john",
+    "password": "password123admin"
+}`
+
+### Member
+
+`{
+    "username": "anna",
+    "password": "password123member"
+}`
+
+
+![PictureOfToken](https://i.imgur.com/F5YHrec.png)
+* Copy the `accessToken`. 
+* Go to whatever endpoint you like --> Header, choose write `Authorization` as key and `Bearer + accessToken` in value field and hit send.
+![PictureOfAcceptedToken](https://i.imgur.com/Hd80eFe.png)
+* Go to  --> GET `/api/all` and to populate data in the database.
+* Depending which user you are authenticated with you'll be forbidden or let through.
+
+### Update and create 
+If you don't define a new item the api will automatically generate a standard object.
+` 
+  name: 'standardturkey',
+  category: 'standardmeat',
+  price: 400
+`
+
+If you want to create an own / change an already existing item do following:
+Body --> Raw --> JSON and copying following syntax and fill with whatever you want:
+`{
+  "name": "carrots",
+	"category": "veggies",
+	"price": 65
+  }`
 
 ## Test API
 Tests are availble and provided in the Postman collection.
+`web_api_heroku.postman_collection.json` is for the public url.
+
+## Endpoints
+* POST `/login` - Login
+* GET `/api/all` - Get all items 
+* POST `/api/new` - Create new item
+* GET `/api/:id` - Get item by id 
+* DEL`/api/:id` - Delete item by id 
+* PUT `/api/:id` - Update item by id 
+* GET `/webhook` - Get webhook
+* POST `/webhook` - Create webhook
+
+## Features 
+As earlier mentioned: secure and create a real working user-system. Also generate a new token when the old expires, therefore it's a refreshed token that isn't in use for the moment. 
+
+
