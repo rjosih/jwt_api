@@ -113,7 +113,7 @@
 							"pm.test(\"Token recieved\", function () {",
 							"    var data = pm.response.json();",
 							"    console.log(pm.response.text())",
-							"    pm.expect(pm.response.text()).to.include('token');",
+							"    pm.expect(pm.response.text()).to.include('accessToken')",
 							"});",
 							"",
 							"pm.test('Check for HATEOAS links', function () {",
