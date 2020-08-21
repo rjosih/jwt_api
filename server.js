@@ -38,7 +38,28 @@ app.use(bodyParser.json({ type: "application/vnd.api+json" }))
 
 app.post('/login', (req, res) => {
       const { username, password } = req.body;
-      const user = users.find(u => { return u.username === username && u.password === password });
+      const user = users.find(u => { return u.username === username && u.password === password })
+
+      var links = [
+        { 
+            self: 
+            [                    
+                {
+                    method: 'POST',
+                    href: req.url, 
+                    rel: 'auth'
+                }
+            ],
+            to: 
+            [
+                {
+                    method: 'GET',
+                    href: '/api/all',
+                    rel: 'items'
+                }
+            ] 
+        }
+    ]
   
       if (user) {
           // generate an access token
@@ -48,6 +69,7 @@ app.post('/login', (req, res) => {
           refreshTokens.push(refreshToken)
           res.json({
               accessToken,
+              links
             //   refreshToken
           });
       } else {
